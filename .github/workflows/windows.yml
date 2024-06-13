@@ -19,7 +19,13 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Setup GraalVM
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+
+      - name: Visual Studio shell
+        uses: egor-tensin/vs-shell@v1
+
+      - name: Setup Gluon's GraalVM
         uses: gluonhq/setup-graalvm@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -27,17 +33,51 @@ jobs:
       - name: Set GRAALVM_HOME
         run: echo "GRAALVM_HOME=${{ env.GLUON_GRAALVM_HOME }}" >> $GITHUB_ENV
 
-      - name: Build with Maven
-        run: mvn clean install
+      - name: Gluon Build and Package
+        shell: cmd
+        run: .\mvnw -Pdesktop gluonfx:build gluonfx:package
 
-      - name: Compile with Gluon
-        run: mvn gluonfx:compile -Pwin
+      - name: Copy native bundles to staging
+        run: |
+          cp -r target/gluonfx/x86_64-windows/vector_trade_front.exe staging
+          cp -r target/gluonfx/x86_64-windows/vector_trade_front-1.0.msi staging
 
-      - name: Build native image with Gluon
-        run: mvn gluonfx:build -Pwin
+      - name: Test application execution
+        run: .\staging\vector_trade_front.exe
 
-      - name: Upload Artifact
+      - name: Upload
         uses: actions/upload-artifact@v2
         with:
-          name: native-image
-          path: target/gluonfx/x86_64-windows/
+          name: Package
+          path: staging
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: 'v1.0.0'
+          release_name: 'v1.0.0'
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: staging/vector_trade_front.exe
+          asset_name: vector_trade_front.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload Release MSI
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: staging/vector_trade_front-1.0.msi
+          asset_name: vector_trade_front-1.0.msi
+          asset_content_type: application/octet-stream
