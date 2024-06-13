@@ -38,6 +38,7 @@ jobs:
         with:
           distribution: 'maven'
           maven-version: '3.8.1'
+          java-version: '17'
 
       - name: Gluon Build and Package
         shell: cmd
