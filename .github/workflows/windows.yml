@@ -19,17 +19,6 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - name: Install CMake
-        uses: lukka/get-cmake@v2
-        with:
-          cmakeVersion: '3.22.0'
-
-      - name: Install Ninja
-        run: choco install ninja
-
-      - name: Install Visual Studio
-        run: choco install visualstudio2019buildtools --params "--add Microsoft.VisualStudio.Workload.VCTools --includeRecommended --includeOptional"
-
       - name: Build with Maven
         run: mvn clean install
 
