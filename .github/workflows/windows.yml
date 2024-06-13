@@ -33,12 +33,11 @@ jobs:
       - name: Set GRAALVM_HOME
         run: echo "GRAALVM_HOME=${{ env.GLUON_GRAALVM_HOME }}" >> $GITHUB_ENV
 
-      - name: Set up Maven
-        uses: actions/setup-java@v2
-        with:
-          distribution: 'maven'
-          maven-version: '3.8.1'
-          java-version: '17'
+      - name: Install Maven
+        run: choco install maven --version=3.8.1
+
+      - name: Verify Maven Installation
+        run: mvn -version
 
       - name: Gluon Build and Package
         shell: cmd
