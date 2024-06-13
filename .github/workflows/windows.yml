@@ -34,8 +34,9 @@ jobs:
         run: echo "GRAALVM_HOME=${{ env.GLUON_GRAALVM_HOME }}" >> $GITHUB_ENV
 
       - name: Set up Maven
-        uses: sormuras/setup-maven@v1
+        uses: actions/setup-java@v2
         with:
+          distribution: 'maven'
           maven-version: '3.8.1'
 
       - name: Gluon Build and Package
