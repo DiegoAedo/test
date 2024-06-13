@@ -33,14 +33,23 @@ jobs:
       - name: Set GRAALVM_HOME
         run: echo "GRAALVM_HOME=${{ env.GLUON_GRAALVM_HOME }}" >> $GITHUB_ENV
 
+      - name: Install Maven
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'maven'
+          maven-version: '3.8.1'
+
       - name: Gluon Build and Package
         shell: cmd
-        run: .\mvnw -Pdesktop gluonfx:build gluonfx:package
+        run: mvn -Pdesktop gluonfx:build gluonfx:package
+
+      - name: Make staging directory
+        run: mkdir staging
 
       - name: Copy native bundles to staging
         run: |
-          cp -r target/gluonfx/x86_64-windows/vector_trade_front.exe staging
-          cp -r target/gluonfx/x86_64-windows/vector_trade_front-1.0.msi staging
+          cp target/gluonfx/x86_64-windows/vector_trade_front.exe staging
+          cp target/gluonfx/x86_64-windows/vector_trade_front-1.0.msi staging
 
       - name: Test application execution
         run: .\staging\vector_trade_front.exe
