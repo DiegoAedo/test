@@ -33,15 +33,14 @@ jobs:
       - name: Set GRAALVM_HOME
         run: echo "GRAALVM_HOME=${{ env.GLUON_GRAALVM_HOME }}" >> $GITHUB_ENV
 
-      - name: Install Maven
-        uses: actions/setup-java@v2
+      - name: Set up Maven
+        uses: sormuras/setup-maven@v1
         with:
-          distribution: 'maven'
           maven-version: '3.8.1'
 
       - name: Gluon Build and Package
         shell: cmd
-        run: mvn -Pdesktop gluonfx:build gluonfx:package
+        run: mvn -Pwin gluonfx:build gluonfx:package
 
       - name: Make staging directory
         run: mkdir staging
