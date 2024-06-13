@@ -19,6 +19,14 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
+      - name: Setup GraalVM
+        uses: gluonhq/setup-graalvm@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set GRAALVM_HOME
+        run: echo "GRAALVM_HOME=${{ env.GLUON_GRAALVM_HOME }}" >> $GITHUB_ENV
+
       - name: Build with Maven
         run: mvn clean install
 

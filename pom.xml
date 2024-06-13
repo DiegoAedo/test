@@ -78,4 +78,18 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>win</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <graalvmHome>${env.GRAALVM_HOME}</graalvmHome>
+            </properties>
+        </profile>
+    </profiles>
 </project>
